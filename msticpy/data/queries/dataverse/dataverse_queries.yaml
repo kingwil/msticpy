@@ -1,0 +1,129 @@
+metadata:
+  version: 1
+  description: Microsoft Dataverse Queries
+  data_environments: [Dataverse]
+  data_families: [DataverseQuery]
+  tags: ['dataverse']
+defaults:
+  metadata:
+    data_source: 'dataverse_query'
+  parameters:
+      path:
+        description: Path name
+        type: str
+        default: '/accounts'
+      start:
+        description: Query start time
+        type: datetime
+      end:
+        description: Query end time
+        type: datetime
+      systemuserid:
+        description: 'Systemuser id to perform the lookup'
+        type: str
+        default: ''
+sources:
+  list_accounts:
+    description: Retrieves list of accounts
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '{path}'
+      uri: None
+    parameters:
+  get_annotations_by_date:
+    description: Retrieves list of annotations
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '/annotations?$filter=modifiedon gt {start}'
+      uri: None
+    parameters:
+  list_entities:
+    description: Retrieves list of Dataverse tables with primary record id and audit state
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '/EntityDefinitions?$select=EntitySetName,SchemaName,PrimaryIdAttribute,IsAuditEnabled,IsRetrieveAuditEnabled,IsRetrieveMultipleAuditEnabled'
+      uri: None
+    parameters:
+  list_annotations:
+    description: Retrieves list of annotations. This includes IsAuditEnabled, IsRetrieveAuditEnabled or IsRetrieveMultipleAuditEnabled
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '/annotations'
+      uri: None
+    parameters:
+  get_record_by_recordid:
+    description: Retrieves record details for a given entity and record id
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: /{entity_name}?$filter={id_property} eq {record_id}
+      uri: None
+    parameters:
+      entity_name:
+        description: 'Entity (table) name to perform the lookup'
+        type: str
+        default: ''
+      id_property:
+        description: 'Attibute to search for record id'
+        type: str
+        default: ''
+      record_id:
+        description: 'Record id to search for'
+        type: str
+        default: ''
+  list_publishers:
+    description: Retrieve publisher information from Dataverse
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '/publishers'
+      uri: None
+    parameters:
+  get_audits:
+    description: Retrieve publisher information from Dataverse
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '/audits'
+      uri: None
+    parameters:
+  list_systemusers:
+    description: Retrieve system user information from Dataverse
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '/systemusers'
+      uri: None
+    parameters:
+  get_signins_by_user:
+    description: Retrieves list of annotations
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '/audits?$filter=createdon gt {start} and createdon lt {end} and (action eq 64 or action eq 65) and _objectid_value eq {systemuserid}'
+      uri: None
+    parameters:
+  get_systemuser_by_id:
+    description: Retrieve system user information from Dataverse
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '/systemusers?$filter=systemuserid eq {systemuserid}'
+      uri: None
+    parameters:
+  get_systemuser_by_upn:
+    description: Retrieve system user information from Dataverse
+    metadata:
+      data_source: 'dataverse_query'
+    args:
+      query: '/systemusers?$filter=windowsliveid eq {upn}'
+      uri: None
+    parameters:
+      upn:
+        description: 'User principal name to perform the lookup'
+        type: str
+        default: ''
